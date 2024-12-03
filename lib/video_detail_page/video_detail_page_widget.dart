@@ -29,6 +29,8 @@ class _VideoDetailPageWidgetState extends State<VideoDetailPageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => VideoDetailPageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -66,11 +68,10 @@ class _VideoDetailPageWidgetState extends State<VideoDetailPageWidget> {
           );
         }
         final videoDetailPageVideoByIDResponse = snapshot.data!;
+
         return YoutubeFullScreenWrapper(
           child: GestureDetector(
-            onTap: () => _model.unfocusNode.canRequestFocus
-                ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-                : FocusScope.of(context).unfocus(),
+            onTap: () => FocusScope.of(context).unfocus(),
             child: Scaffold(
               key: scaffoldKey,
               backgroundColor: FlutterFlowTheme.of(context).primaryBackground,

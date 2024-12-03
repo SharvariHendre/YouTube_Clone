@@ -26,6 +26,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -40,9 +42,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     context.watch<FFAppState>();
 
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -155,6 +155,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       text: 'Explore',
                       icon: const FaIcon(
                         FontAwesomeIcons.compass,
+                        size: 15.0,
                       ),
                       options: FFButtonOptions(
                         height: 40.0,
@@ -191,7 +192,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               ChipData('Trending'),
                               ChipData('Dance')
                             ],
-                            onChanged: (val) => setState(() =>
+                            onChanged: (val) => safeSetState(() =>
                                 _model.choiceChipsValue = val?.firstOrNull),
                             selectedChipStyle: ChipStyle(
                               backgroundColor: const Color(0xFF494949),
@@ -270,12 +271,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       );
                     }
                     final listViewPopularVideosResponse = snapshot.data!;
+
                     return Builder(
                       builder: (context) {
                         final video = PopularVideosCall.videoList(
                               listViewPopularVideosResponse.jsonBody,
                             )?.toList() ??
                             [];
+
                         return ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
@@ -359,6 +362,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               }
                                               final circleImageChannelAPIResponse =
                                                   snapshot.data!;
+
                                               return Container(
                                                 width: 45.0,
                                                 height: 45.0,

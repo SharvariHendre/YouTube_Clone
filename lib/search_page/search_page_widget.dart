@@ -26,6 +26,8 @@ class _SearchPageWidgetState extends State<SearchPageWidget> {
 
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -40,9 +42,7 @@ class _SearchPageWidgetState extends State<SearchPageWidget> {
     context.watch<FFAppState>();
 
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -83,7 +83,7 @@ class _SearchPageWidgetState extends State<SearchPageWidget> {
                             onChanged: (_) => EasyDebounce.debounce(
                               '_model.textController',
                               const Duration(milliseconds: 2000),
-                              () => setState(() {}),
+                              () => safeSetState(() {}),
                             ),
                             autofocus: true,
                             obscureText: false,
@@ -184,12 +184,14 @@ class _SearchPageWidgetState extends State<SearchPageWidget> {
                       );
                     }
                     final listViewSearchResponse = snapshot.data!;
+
                     return Builder(
                       builder: (context) {
                         final searchResults = SearchCall.items(
                               listViewSearchResponse.jsonBody,
                             )?.toList() ??
                             [];
+
                         return ListView.builder(
                           padding: EdgeInsets.zero,
                           shrinkWrap: true,
